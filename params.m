@@ -150,7 +150,7 @@ params = p;
 params.adim.c_0 = 1; % TO CHOOSE
 
 %Charging profile
-params.adim.i = @(t) (0); % TO CHOOSE
+params.adim.i = @(t) (t); % TO CHOOSE
 
 % Conductivity
 params.kappa_n = (1.5 + 0.1) / 2; % Mean value of the conductivity of electrolyte [S/m]
@@ -196,10 +196,10 @@ params.dscrtzn.N_s_n = 5;% Number of nodes in the solid phase (negative electrod
 params.dscrtzn.N_e_p = 10;% Number of nodes in the electrolyte (positive electrode)
 params.dcrtzn.N_s_p = 10;% Number of nodes in the solid phase (positive electrode)
 
-params.misc.xmin = -1;%-0.00005;
-params.misc.xmax = 1;%0.00005;
+params.misc.xmin = -0.0015;
+params.misc.xmax = 0.0015;
 
 %% Modifications
-params.adim.E_n = params.adim.E_n * 10^(-5);
+params.adim.E_n = params.adim.E_n * 10^(-0);
 end
 

@@ -15,6 +15,7 @@ Rs = params.R_s_n;
 %       For the dimensional system
 matrices.ephase.D1_noBC = (2/L)*ephase.D1_cheb;
 matrices.sphase.D1_noBC = (2/Rs)*sphase.D1_cheb;
+
 matrices.ephase.x = (1 + ephase.x_cheb)*L/2;
 matrices.sphase.r = (1 + sphase.r_cheb) * Rs/2;
 
