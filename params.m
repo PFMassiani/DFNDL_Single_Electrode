@@ -150,7 +150,7 @@ params = p;
 params.adim.c_0 = 1; % TO CHOOSE
 
 %Charging profile
-params.adim.i = @(t) (t); % TO CHOOSE
+params.adim.i = @(t) (1); % TO CHOOSE
 
 % Conductivity
 params.kappa_n = (1.5 + 0.1) / 2; % Mean value of the conductivity of electrolyte [S/m]

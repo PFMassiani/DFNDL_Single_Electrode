@@ -1,4 +1,4 @@
-function [ flat.D,flat.exo_bdry,flat.nonlinear ] = flatten_matrices( matrices,params )
+function [ D,exo_bdry,nonlinear ] = flatten_matrices( matrices,params )
 %FLATTEN_MATRICES Summary of this function goes here
 %   The natural structure of the problem (2 spatial dimensions) is not
 %   permitted by the MATLAB solver. For instance, the state variable us
@@ -24,8 +24,8 @@ mask.us2R(:,:) = logical([zeros(2*Nem2,Nem2);
                                             kron(eye(Nem2),ones(Nsm2,1))]);
 
 %% Linear dyanmics matrix
-base.dl = [params.adim.theta_c_n * sparse(matrices.adim.ephase.dl.D2_BC) sparse(Nem2,NTOT - Nem2)];
-base.elyte = [params.adim.theta_c_n * sparse(matrices.adim.ephase.dl.D2_BC)  params.adim.theta_d_n * sparse(matrices.adim.ephase.elyte.D2_BC) sparse(Nem2, NTOT - 2*Nem2)];
+base.dl =@(t) ([params.adim.theta_c_n * sparse(matrices.adim.ephase.dl.D2_BC(t)) sparse(Nem2,NTOT - Nem2)]);
+base.elyte = @(t) ([params.adim.theta_c_n * sparse(matrices.adim.ephase.dl.D2_BC(t))  params.adim.theta_d_n * sparse(matrices.adim.ephase.elyte.D2_BC) sparse(Nem2, NTOT - 2*Nem2)]);
 base.sphase = [sparse(NTOT - 2*Nem2,2*Nem2), kron(speye(Nem2), matrices.adim.sphase.us.D2_BC)];
 
 indexlist_linear_dl_us = zeros(Nem2,2);
@@ -40,9 +40,9 @@ for i = 1:size(indexlist_linear_dl_us,1)
     base.sphase(i_real:i_real+Nsm2-1,j_real) = matrices.adim.sphase.us.exogeneous_linear_dl(:);
 end
 
-flat.D = [base.dl;
-            base.elyte;
-            base.sphase];
+D = @(t) ([base.dl(t);
+        base.elyte(t);
+        base.sphase]);
         
 %% Nonlinear dynamics terms
 % Bulter-Volmer term in dl's dynamics
@@ -55,18 +55,18 @@ flat.D = [base.dl;
 %% Source terms because of boundaries
 
 % Linear boundary conditions
-flat.exo_bdry = [params.adim.theta_c_n * matrices.adim.ephase.dl.exogeneous_bdry;
-                                params.adim.theta_d_n * matrices.adim.ephase.elyte.exogeneous_bdry;
-                                sparse(NTOT - 2*Nem2,1)];
+exo_bdry = @(t) ([params.adim.theta_c_n * matrices.adim.ephase.dl.exogeneous_bdry(t);
+                                params.adim.theta_d_n * matrices.adim.ephase.elyte.exogeneous_bdry(t);
+                                sparse(NTOT - 2*Nem2,1)]);
 
 % Nonlinear boundary condition : Butler-Volmer term in us dynamics
 nonlinear_us = @(t,x) (- apply_elementwise_masked( matrices.adim.sphase.us.exogeneous_nonlinear, Nsm2, x, mask.dl,mask.us2R ));
 
 %% Nonlinear terms synthesis
 
-flat.nonlinear = @(t,x) ([params.adim.K_n * params.adim.theta_c_n * matrices.adim.ephase.elyte.logterm_BC(x(mask.elyte));
-                                                            - matrices.adim.ephase.dl.butler_volmer(x(mask.all_dl),compute_ussurf2N(x,matrices,mask)) + params.adim.K_n * params.adim.theta_c_n * matrices.adim.ephase.elyte.logterm_BC(x(mask.elyte));
-                                                            nonlinear_us(t,x)]);
+nonlinear = @(t,x) ([params.adim.K_n * params.adim.theta_c_n * matrices.adim.ephase.elyte.logterm_BC(t,x(mask.elyte));
+                                      - matrices.adim.ephase.dl.butler_volmer(x(mask.all_dl),compute_ussurf2N(x,matrices,mask)) + params.adim.K_n * params.adim.theta_c_n * matrices.adim.ephase.elyte.logterm_BC(t,x(mask.elyte));
+                                      nonlinear_us(t,x)]);
         
 end
 
