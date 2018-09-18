@@ -87,14 +87,14 @@ disp(msg)
 T = 1:10;
 
 for t = T
-    t_matrices = matrices_linearized_t_dep(t,matrices,params);
+    matrices = matrices_linearized_t_dep(t,matrices,params);
     %Building a function DL that satisfies the BC : a parabola, whose
     %derivative in 0 and 1 is equal to -/+ i.
     i = params.adim.i(t);
     CONST = t; % Arbitrary constant : should not change the results
     DL = matrices.adim.ephase.x .* (matrices.adim.ephase.x - 1) * i + CONST;
     DL2N = DL(2:end - 1);
-    testvar = t_matrices.D2_BC * DL2N + t_matrices.exogeneous_bdry;
+    testvar = matrices.adim.ephase.dl.D2_BC * DL2N + matrices.adim.ephase.dl.exogeneous_bdry;
     if (all(abs(testvar - 2*i) < TOLERANCE));result = 'PASSED' ; else; result = ['FAILED, max value = ',num2str(max(abs(testvar - 2*i)))];end
     msg = ['Second order differentiation of parabola (electrolyte phase), TIMESTEP = ',num2str(t),' ....... ', result];
     disp(msg)

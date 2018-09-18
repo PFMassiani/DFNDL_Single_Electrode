@@ -189,7 +189,7 @@ params.adim.theta_f_n = (params.D_s_n0 / params.R_s_n^2)*params.R_f_n * params.C
 params.adim.theta_f_p = (params.D_s_p0 / params.R_s_p^2)*params.R_f_p * params.C_p; % Ratio comparing solid diffusion and filme resistance characteristic times, positive electrode
 params.adim.rho_n = params.adim.theta_d_n / params.adim.theta_c_n; % Rho coefficient, negative electrode
 params.adim.rho_n = params.adim.theta_d_p / params.adim.theta_c_p; % Rho coefficient, positive electrode
-
+params.adim.K_n = 1; %TODO
 %% Simulation parameters
 params.dscrtzn.N_e_n = 10; % Number of nodes in the electrolyte (negative electrode)
 params.dscrtzn.N_s_n = 5;% Number of nodes in the solid phase (negative electrode)
