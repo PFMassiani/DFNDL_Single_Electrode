@@ -149,9 +149,6 @@ params = p;
 %Linearization point
 params.adim.c_0 = 1; % TO CHOOSE
 
-%Charging profile
-params.adim.i = @(t) (1); % TO CHOOSE
-
 % Conductivity
 params.kappa_n = (1.5 + 0.1) / 2; % Mean value of the conductivity of electrolyte [S/m]
 params.kappa_p = (1.5 + 0.1) / 2; % Mean value of the conductivity of electrolyte [S/m]
@@ -189,7 +186,14 @@ params.adim.theta_f_n = (params.D_s_n0 / params.R_s_n^2)*params.R_f_n * params.C
 params.adim.theta_f_p = (params.D_s_p0 / params.R_s_p^2)*params.R_f_p * params.C_p; % Ratio comparing solid diffusion and filme resistance characteristic times, positive electrode
 params.adim.rho_n = params.adim.theta_d_n / params.adim.theta_c_n; % Rho coefficient, negative electrode
 params.adim.rho_n = params.adim.theta_d_p / params.adim.theta_c_p; % Rho coefficient, positive electrode
-params.adim.K_n = 1; %TODO
+%% Modifications
+params.adim.E_n = params.adim.E_n * 10^(-5);
+%% End of modifs
+params.adim.K_n = 2*(1-params.t_plus)*(1+0)/params.adim.E_n; %TODO
+
+%Charging profile
+params.adim.i = @(t) (1e13* sin(1000*2*pi*t) * params.L_n/(params.V_0_n * params.sig_n)); % TO CHOOSE
+
 %% Simulation parameters
 params.dscrtzn.N_e_n = 10; % Number of nodes in the electrolyte (negative electrode)
 params.dscrtzn.N_s_n = 5;% Number of nodes in the solid phase (negative electrode)
@@ -199,7 +203,12 @@ params.dcrtzn.N_s_p = 10;% Number of nodes in the solid phase (positive electrod
 params.misc.xmin = -0.0015;
 params.misc.xmax = 0.0015;
 
-%% Modifications
-params.adim.E_n = params.adim.E_n * 10^(-0);
-end
 
+function y =door(t)
+if t<10
+    y=1e11;
+else
+    y=0;
+end
+end
+end
