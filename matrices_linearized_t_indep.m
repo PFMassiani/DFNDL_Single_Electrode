@@ -2,10 +2,10 @@ function [ matrices ] = matrices_linearized_t_indep( params )
 %MATRICES Summary of this function goes here
 %   Detailed explanation goes here
 
-matrices.N_s = params.dscrtzn.N_s_n;
-matrices.N_elyte = params.dscrtzn.N_e_n;
-L = params.L_n;
-Rs = params.R_s_n;
+matrices.N_s = params.dscrtzn.N_s;
+matrices.N_elyte = params.dscrtzn.N_e;
+L = params.L;
+Rs = params.R_s;
 
 %% Scaled differentiation operators (no Boundary Conditions)
 
@@ -59,9 +59,9 @@ matrices.adim.ephase.elyte.exogeneous_bdry_left = @(t) (matrices.adim.ephase.D2_
 matrices.adim.ephase.elyte.exogeneous_bdry_right = @(t)(matrices.adim.ephase.D2_noBC(2:end-1,end) * matrices.adim.ephase.elyte.Vmod(t)); % Same
 matrices.adim.ephase.elyte.exogeneous_bdry = @(t)(matrices.adim.ephase.elyte.exogeneous_bdry_left(t) + matrices.adim.ephase.elyte.exogeneous_bdry_right(t)); % Same
 matrices.adim.ephase.elyte.logterm_BC = ...
-            @(t,ELYTE2N) (matrices.adim.ephase.D2_noBC(2:end-1,2:end-1) * log(1 + ELYTE2N / params.adim.c_0)...
-                                            + matrices.adim.ephase.D2_noBC(2:end-1,1) * log( 1 + (matrices.adim.ephase.elyte.Umod(t) + matrices.adim.ephase.elyte.Dmod * ELYTE2N)/params.adim.c_0)...
-                                            + matrices.adim.ephase.D2_noBC(2:end-1,end) * log( 1 + (matrices.adim.ephase.elyte.Vmod(t) + matrices.adim.ephase.elyte.Emod * ELYTE2N)/params.adim.c_0)...
+            @(t,ELYTE2N) (matrices.adim.ephase.D2_noBC(2:end-1,2:end-1) * log(ELYTE2N)...
+                                            + matrices.adim.ephase.D2_noBC(2:end-1,1) * log(matrices.adim.ephase.elyte.Umod(t) + matrices.adim.ephase.elyte.Dmod * ELYTE2N)...
+                                            + matrices.adim.ephase.D2_noBC(2:end-1,end) * log(matrices.adim.ephase.elyte.Vmod(t) + matrices.adim.ephase.elyte.Emod * ELYTE2N)...
                                         );
 
 %% Boundary conditions : solid phase

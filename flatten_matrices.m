@@ -26,8 +26,8 @@ mask.us2R(:,:) = logical([zeros(2*Nem2,Nem2);
 mask.ussurf = logical([zeros(NTOT - Nem2,1);
                                             ones(Nem2,1)]);
 %% Linear dynamics matrix
-base.dl =@(t) ([params.adim.theta_c_n * sparse(matrices.adim.ephase.dl.D2_BC(t)) sparse(Nem2,NTOT - Nem2)]);
-base.elyte = @(t) ([params.adim.theta_c_n * sparse(matrices.adim.ephase.dl.D2_BC(t))  params.adim.theta_d_n * sparse(matrices.adim.ephase.elyte.D2_BC) sparse(Nem2, NTOT - 2*Nem2)]);
+base.dl =@(t) ([params.theta_c * sparse(matrices.adim.ephase.dl.D2_BC(t)) sparse(Nem2,NTOT - Nem2)]);
+base.elyte = @(t) ([params.theta_c * sparse(matrices.adim.ephase.dl.D2_BC(t))  params.theta_d * sparse(matrices.adim.ephase.elyte.D2_BC) sparse(Nem2, NTOT - 2*Nem2)]);
 base.us = [sparse(NTOT - 3*Nem2,2*Nem2), kron(speye(Nem2), matrices.adim.sphase.us.D2_BC), sparse(NTOT - 3* Nem2, NTOT - 2*Nem2 - Nsm2*Nem2);];
 base.ussurf = [sparse(Nem2,2*Nem2), sparse(matrices.adim.sphase.ussurf.linear_term_us), sparse(matrices.adim.sphase.ussurf.linear_term_ussurf)];
 
@@ -59,8 +59,8 @@ D = @(t) ([base.dl(t);
 %% Source terms because of boundaries
 
 % Exogeneous boundary conditions
-exo_bdry = @(t) ([params.adim.theta_c_n * matrices.adim.ephase.dl.exogeneous_bdry(t);
-                                params.adim.theta_c_n * matrices.adim.ephase.dl.exogeneous_bdry(t)+params.adim.theta_d_n * matrices.adim.ephase.elyte.exogeneous_bdry(t);
+exo_bdry = @(t) ([params.theta_c * matrices.adim.ephase.dl.exogeneous_bdry(t);
+                                params.theta_c * matrices.adim.ephase.dl.exogeneous_bdry(t)+params.theta_d * matrices.adim.ephase.elyte.exogeneous_bdry(t);
                                 sparse(NTOT - 2*Nem2,1)]);
 
 % Nonlinear boundary condition : Butler-Volmer term in us dynamics
@@ -68,10 +68,10 @@ exo_bdry = @(t) ([params.adim.theta_c_n * matrices.adim.ephase.dl.exogeneous_bdr
 
 %% Nonlinear terms synthesis
 
-nonlinear = @(t,x) ([- matrices.adim.ephase.dl.butler_volmer(x(mask.all_dl),x(mask.ussurf)) + params.adim.K_n * params.adim.theta_c_n * matrices.adim.ephase.elyte.logterm_BC(t,x(mask.elyte));
-                                       params.adim.K_n * params.adim.theta_c_n * matrices.adim.ephase.elyte.logterm_BC(t,x(mask.elyte));
-                                      flatten(matrices.adim.sphase.us.exogeneous_nonlinear(x(mask.ussurf)));
-                                      params.adim.mu_n / (1 - matrices.adim.sphase.D1_noBC(1)) * matrices.adim.ephase.dl.butler_volmer(x(mask.all_dl),x(mask.ussurf))]);
+nonlinear = @(t,x) ([-matrices.adim.ephase.dl.butler_volmer(x(mask.all_dl),x(mask.ussurf)) + params.K * params.theta_c * matrices.adim.ephase.elyte.logterm_BC(t,x(mask.elyte));
+                                       params.K * params.theta_c * matrices.adim.ephase.elyte.logterm_BC(t,x(mask.elyte));
+                                      reshape(matrices.adim.sphase.us.exogeneous_nonlinear(x(mask.ussurf)), Nsm2 * Nem2, 1);%flatten(matrices.adim.sphase.us.exogeneous_nonlinear(x(mask.ussurf)));
+                                      params.mu / (1 - matrices.adim.sphase.D1_noBC(1)) * matrices.adim.ephase.dl.butler_volmer(x(mask.all_dl),x(mask.ussurf))]);
         
 end
 
