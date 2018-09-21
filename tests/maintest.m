@@ -65,7 +65,7 @@ for k = 1:length(t)
     plot(x,dl(k,:),'o-'); grid on;
     title(sprintf('time = %0.7f',t(k)));
     ylabel('DL')
-%     ylim([-1 1])
+     ylim([3 5])
     pause(0.001);
 end
 figure

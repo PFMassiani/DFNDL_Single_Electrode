@@ -34,9 +34,9 @@ p.beta = 0.1; % "Identifiability and Parameter Estimation of the Single Particle
 p.csmax = 30000; % [mol/m^3], "Identifiability and Parameter Estimation of the Single Particle Lithium-Ion Battery Model", David Howey
 p.A = p.epsilon_s * p.L / (4*pi*p.R_s^3 / 3);
 p.Qth = p.epsilon_s * p.L * p.csmax * p.Faraday * p.A;
-p.OCP_slope_wrt_stoechio = p.epsilon_s * p.L * p.csmax * p.Faraday * p.A * p.beta;% "Identifiability and Parameter Estimation of the Single Particle Lithium-Ion Battery Model", David Howey
-%p.OCP_slope = p.OCP_slope_wrt_stoechio / (p.R_s * p.csmax);
-p.OCP_slope = -1e4;
+p.OCP_slope_wrt_stoechio = -p.epsilon_s * p.L * p.csmax * p.Faraday * p.A * p.beta;% "Identifiability and Parameter Estimation of the Single Particle Lithium-Ion Battery Model", David Howey
+p.OCP_slope = p.OCP_slope_wrt_stoechio / (p.R_s * p.csmax);
+%p.OCP_slope = -1e4;
 
 % Parameters appearing in the system
 p.V_0 = (p.R_s^2 / p.D_s)*(p.a_s*p.i_0)/p.aC;
@@ -48,7 +48,7 @@ p.K = 2 * (1 - p.t_0) * (1 + dlnfdlnce) / p.E;
 p.mu = p.OCP_slope*p.R_s^2*p.i_0/(p.V_0*p.D_s*p.Faraday);
 
 %Current profile
-p.i_dim = @(t) (-0); % [A]
+p.i_dim = @(t) (100*10000); % [A]
 p.i = @(t) (p.i_dim(t * p.R_s^2 / p.D_s) * p.L / (p.sigma * p.V_0));
 
 %% Simulation parameters
