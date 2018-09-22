@@ -33,16 +33,12 @@ for i = 1:length(t)
     us(i,end,:) = 0;
     us(i,1,:) = state(i,mask_ussurf);
 end
-dl = dl * params.V_0;
+dl = dl * params.V_0 + params.OCP_0;
 elyte =  elyte * params.aC * params.V_0 * (1 - params.t_0) / params.Faraday;
-us = us * (params.csmax*params.R_s);
+us = us; %* params.OCP_slope / params.V_0;
 
 cs = zeros(size(us));
-for v = 1:length(u)
-    for j = 1:size(us,3)
-        cs(v,1:end-1,j) = us(v,1:end-1,j) ./ r(1:end-1)';
-        cs(v,end,j) = (matrices.sphase.D1_noBC(end,:)*us(v,:,j)')';
-    end
-end
+cs(:,:,1:end-1) = us(:,:,1:end-1) ./ r(1:end-1);
+cs(:,:,end) = matrices.sphase.D1_noBC(,);
 end
 

@@ -43,7 +43,7 @@ end
 % To check positivity of cs depending on IC
 
 for j = 1:length(x)
-    us_init(:,j) = r(:)*cssurf_init;
+    us_init(:,j) = r()
 end
 
 %% Adimensionalized and flattened initial conditions
@@ -56,8 +56,8 @@ N_s = params.dscrtzn.N_s;
 
 initial.elyte = elyte_init / (params.aC * params.V_0 * (1 - params.t_0) / params.Faraday);
 initial.dl = dl_init / params.V_0;
+initial.ussurf = ussurf_init/ (params.csmax*params.R_s) * ones(length(x),1);
 initial.us = us_init / (params.csmax*params.R_s);
-initial.ussurf = initial.us(1,:)';
 
 initial.elyte2N = initial.elyte(2:end-1);
 initial.dl2N = initial.dl(2:end-1);
