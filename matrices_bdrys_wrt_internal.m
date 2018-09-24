@@ -11,13 +11,13 @@ function [ Dmod,Emod,Umod,Vmod ] = matrices_bdrys_wrt_internal( D,E,U,V,bdry_coe
 Dmod(:) = ( (D(end)/(E(end) - bdry_coef(2)))*E(2:end - 1) - D(2:end-1)) / (D(1) - bdry_coef(1) - D(end)*E(1)/(E(end) - bdry_coef(2) ) );
 Emod(:) = ( (E(1)/(D(1) - bdry_coef(1)) ) * D(2:end - 1) - E(2:end-1) ) / (E(end) - bdry_coef(2) - (E(1)*D(end))/(D(1) - bdry_coef(1) ) );
 
-Umod_left = @(t)(U(t) / ( D(1) - bdry_coef(1) - D(end)*E(1)/( E(end) - bdry_coef(1) ) ));
-Vmod_left = @(t) (- V(t) * (D(end)/(E(end) - bdry_coef(2) ) ) / ( D(1) - bdry_coef(1) - D(end)*E(1)/( E(end) - bdry_coef(1) ) ));
+Umod_left = U / ( D(1) - bdry_coef(1) - D(end)*E(1)/( E(end) - bdry_coef(1) ) );
+Vmod_left = - V * (D(end)/(E(end) - bdry_coef(2) ) ) / ( D(1) - bdry_coef(1) - D(end)*E(1)/( E(end) - bdry_coef(1) ) );
 
-Umod_right = @(t)(- U(t) * (E(1) / ( D(1) - bdry_coef(2) ) ) / ( E(end) - bdry_coef(2) - E(1)*D(end)/(D(1) - bdry_coef(1) ) ));
-Vmod_right = @(t)(V(t) / ( E(end) - bdry_coef(2) - E(1)*D(end)/(D(1) - bdry_coef(1) ) ));
+Umod_right = - U * (E(1) / ( D(1) - bdry_coef(2) ) ) / ( E(end) - bdry_coef(2) - E(1)*D(end)/(D(1) - bdry_coef(1) ) );
+Vmod_right = V / ( E(end) - bdry_coef(2) - E(1)*D(end)/(D(1) - bdry_coef(1) ) );
 
-Umod = @(t)(Umod_left(t) + Vmod_left(t));
-Vmod = @(t)(Umod_right(t) + Vmod_right(t));
+Umod = Umod_left + Vmod_left;
+Vmod = Umod_right + Vmod_right;
 end
 

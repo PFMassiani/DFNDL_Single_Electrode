@@ -20,15 +20,16 @@ dl = zeros(length(t),Ne);
 elyte = zeros(length(t),Ne);
 us = zeros(length(t),Ns,Nem2);
 for i = 1:length(t)
+    matrices = matrices_linearized_t_dep(t(i),matrices,params);
     dl(i,2:end-1) = state(i,mask_dl);
     elyte(i,2:end-1) = state(i,mask_elyte);
     us(i,2:end-1,:) = reshape(state(i,mask_us),Nsm2,Nem2);
     
-    dl(i,1) = matrices.adim.ephase.dl.Umod(t(end)) + matrices.adim.ephase.dl.Dmod * dl(i,2:end-1)';
-    dl(i,end) = matrices.adim.ephase.dl.Vmod(t(end)) + matrices.adim.ephase.dl.Emod * dl(i,2:end-1)';
+    dl(i,1) = matrices.adim.ephase.dl.Umod + matrices.adim.ephase.dl.Dmod * dl(i,2:end-1)';
+    dl(i,end) = matrices.adim.ephase.dl.Vmod + matrices.adim.ephase.dl.Emod * dl(i,2:end-1)';
     
-    elyte(i,1) = matrices.adim.ephase.elyte.Umod(t(end)) + matrices.adim.ephase.elyte.Dmod * elyte(i,2:end-1)';
-    elyte(i,end) = matrices.adim.ephase.elyte.Vmod(t(end)) + matrices.adim.ephase.elyte.Emod * elyte(i,2:end-1)'; 
+    elyte(i,1) = matrices.adim.ephase.elyte.Umod + matrices.adim.ephase.elyte.Dmod * elyte(i,2:end-1)';
+    elyte(i,end) = matrices.adim.ephase.elyte.Vmod + matrices.adim.ephase.elyte.Emod * elyte(i,2:end-1)'; 
     
     us(i,end,:) = 0;
     us(i,1,:) = state(i,mask_ussurf);

@@ -24,20 +24,23 @@ r = matrices.sphase.r; % Radius across the particle; r(1) = R_s, r(end) = 0
 %                           - dl affine in x, with slope current_profile(0)
 %                           and origin value given by the OCP taken at the
 %                           stoechiometry of the initial surface concentration.
-elyte_init = 1000 * ones(length(x),1); 
-cssurf_init = 0.7*params.csmax;
-ussurf_init = cssurf_init * params.R_s;
+% elyte_init = 1000 * ones(length(x),1); 
+elyte_init = 1000 * ones(length(x),1);
+cssurf_init = 0.6*params.csmax;
 dl_init = ocp_dualfoil(cssurf_init/params.csmax)*ones(length(x),1) + x*current_profile(0);
-us_init = zeros(length(r), length(x));
-
-syms coef;
-warning('off','symbolic:solve:FallbackToNumerical');
-for j = 1:length(x)
-    bv = - params.mu*matrices.adim.ephase.dl.butler_volmer(dl_init(j)/params.V_0,ussurf_init);
-    c = solve(coef + coef/(exp(coef) - 1) == ussurf_init + bv,coef);
-    b = bv / (exp(c) - 1);
-    us_init(:,j) = b*(exp(c*r) - 1);
+cs_init = init_cs(dl_init,params);
+us_init = zeros(size(cs_init));
+for i = 1:size(us_init,1)
+    us_init(i,:) = r(i)*cs_init(i,:);
 end
+% syms coef;
+% warning('off','symbolic:solve:FallbackToNumerical');
+% for j = 1:length(x)
+%     bv = - params.mu*matrices.adim.ephase.dl.butler_volmer(dl_init(j)/params.V_0,ussurf_init);
+%     c = solve(coef + coef/(exp(coef) - 1) == ussurf_init + bv,coef);
+%     b = bv / (exp(c) - 1);
+%     us_init(:,j) = b*(exp(c*r) - 1);
+% end
 
 %% MODIFICATION 
 % To check positivity of cs depending on IC

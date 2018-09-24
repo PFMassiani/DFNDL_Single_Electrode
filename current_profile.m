@@ -2,6 +2,6 @@ function [ i ] = current_profile( t )
 %CURRENT_PROFILE Summary of this function goes here
 %   Detailed explanation goes here
 
-i=10;
+i=0;
 end
 
